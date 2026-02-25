@@ -69,14 +69,14 @@ jobs:
           path: dist/packaging/
 
       - name: Checkout Homebrew tap
-        if: ${{ vars.HOMEBREW_TAP_REPO != '' && secrets.HOMEBREW_TAP_GITHUB_TOKEN != '' }}
+        if: ${{ vars.HOMEBREW_TAP_REPO != '' }}
         uses: actions/checkout@v4
         with:
           repository: ${{ vars.HOMEBREW_TAP_REPO }}
-          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN || github.token }}
           path: homebrew-tap
       - name: Publish Homebrew formula
-        if: ${{ vars.HOMEBREW_TAP_REPO != '' && secrets.HOMEBREW_TAP_GITHUB_TOKEN != '' }}
+        if: ${{ vars.HOMEBREW_TAP_REPO != '' }}
         run: |
           mkdir -p "homebrew-tap/$(dirname "${HOMEBREW_FORMULA_PATH}")"
           cp dist/packaging/git-doc.rb "homebrew-tap/${HOMEBREW_FORMULA_PATH}"
@@ -92,14 +92,14 @@ jobs:
           git push
 
       - name: Checkout Scoop bucket
-        if: ${{ vars.SCOOP_BUCKET_REPO != '' && secrets.SCOOP_BUCKET_GITHUB_TOKEN != '' }}
+        if: ${{ vars.SCOOP_BUCKET_REPO != '' }}
         uses: actions/checkout@v4
         with:
           repository: ${{ vars.SCOOP_BUCKET_REPO }}
-          token: ${{ secrets.SCOOP_BUCKET_GITHUB_TOKEN }}
+          token: ${{ secrets.SCOOP_BUCKET_GITHUB_TOKEN || github.token }}
           path: scoop-bucket
       - name: Publish Scoop manifest
-        if: ${{ vars.SCOOP_BUCKET_REPO != '' && secrets.SCOOP_BUCKET_GITHUB_TOKEN != '' }}
+        if: ${{ vars.SCOOP_BUCKET_REPO != '' }}
         run: |
           mkdir -p "scoop-bucket/$(dirname "${SCOOP_MANIFEST_PATH}")"
           cp dist/packaging/git-doc.json "scoop-bucket/${SCOOP_MANIFEST_PATH}"
