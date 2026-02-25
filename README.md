@@ -1,7 +1,7 @@
 # git-doc
 
 <p align="center">
-   <img src="logo.svg" alt="git-doc logo" width="180" />
+   <img src="logo.svg" alt="git-doc logo" height = "720" width="1280" />
 </p>
 
 
