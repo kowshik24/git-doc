@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Validate tag format
@@ -70,7 +70,7 @@ jobs:
 
       - name: Checkout Homebrew tap
         if: ${{ vars.HOMEBREW_TAP_REPO != '' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ vars.HOMEBREW_TAP_REPO }}
           token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN || github.token }}
@@ -93,7 +93,7 @@ jobs:
 
       - name: Checkout Scoop bucket
         if: ${{ vars.SCOOP_BUCKET_REPO != '' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ vars.SCOOP_BUCKET_REPO }}
           token: ${{ secrets.SCOOP_BUCKET_GITHUB_TOKEN || github.token }}
