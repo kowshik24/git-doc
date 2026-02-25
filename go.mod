@@ -1,4 +1,4 @@
-module github.com/kowshik/git-doc
+module github.com/kowshik24/git-doc
 
 go 1.21
 

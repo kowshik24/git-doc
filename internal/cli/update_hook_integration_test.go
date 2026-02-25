@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kowshik/git-doc/internal/config"
-	"github.com/kowshik/git-doc/internal/runlock"
+	"github.com/kowshik24/git-doc/internal/config"
+	"github.com/kowshik24/git-doc/internal/runlock"
 )
 
 func TestUpdateFromHookNoOpWhenLockHeld(t *testing.T) {

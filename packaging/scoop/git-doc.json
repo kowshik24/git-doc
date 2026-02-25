@@ -1,15 +1,15 @@
 {
   "version": "0.1.0",
   "description": "Automatically update docs based on Git commits",
-  "homepage": "https://github.com/kowshik/git-doc",
+  "homepage": "https://github.com/kowshik24/git-doc",
   "license": "MIT",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/kowshik/git-doc/releases/download/v0.1.0/git-doc_0.1.0_windows_amd64.zip",
+      "url": "https://github.com/kowshik24/git-doc/releases/download/v0.1.0/git-doc_0.1.0_windows_amd64.zip",
       "hash": "REPLACE_WITH_WINDOWS_AMD64_SHA256"
     },
     "arm64": {
-      "url": "https://github.com/kowshik/git-doc/releases/download/v0.1.0/git-doc_0.1.0_windows_arm64.zip",
+      "url": "https://github.com/kowshik24/git-doc/releases/download/v0.1.0/git-doc_0.1.0_windows_arm64.zip",
       "hash": "REPLACE_WITH_WINDOWS_ARM64_SHA256"
     }
   },
@@ -17,15 +17,15 @@
     "git-doc.exe"
   ],
   "checkver": {
-    "github": "https://github.com/kowshik/git-doc"
+    "github": "https://github.com/kowshik24/git-doc"
   },
   "autoupdate": {
     "architecture": {
       "64bit": {
-        "url": "https://github.com/kowshik/git-doc/releases/download/v$version/git-doc_$version_windows_amd64.zip"
+        "url": "https://github.com/kowshik24/git-doc/releases/download/v$version/git-doc_$version_windows_amd64.zip"
       },
       "arm64": {
-        "url": "https://github.com/kowshik/git-doc/releases/download/v$version/git-doc_$version_windows_arm64.zip"
+        "url": "https://github.com/kowshik24/git-doc/releases/download/v$version/git-doc_$version_windows_arm64.zip"
       }
     }
   }

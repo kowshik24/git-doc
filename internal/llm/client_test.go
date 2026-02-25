@@ -3,7 +3,7 @@ package llm
 import (
 	"testing"
 
-	"github.com/kowshik/git-doc/internal/config"
+	"github.com/kowshik24/git-doc/internal/config"
 )
 
 func TestNewClientSupportsAdditionalProviders(t *testing.T) {

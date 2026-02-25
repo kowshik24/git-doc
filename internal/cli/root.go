@@ -12,14 +12,14 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/kowshik/git-doc/internal/config"
-	"github.com/kowshik/git-doc/internal/doc"
-	"github.com/kowshik/git-doc/internal/gitutil"
-	"github.com/kowshik/git-doc/internal/hooks"
-	"github.com/kowshik/git-doc/internal/llm"
-	"github.com/kowshik/git-doc/internal/orchestrator"
-	"github.com/kowshik/git-doc/internal/runlock"
-	"github.com/kowshik/git-doc/internal/state"
+	"github.com/kowshik24/git-doc/internal/config"
+	"github.com/kowshik24/git-doc/internal/doc"
+	"github.com/kowshik24/git-doc/internal/gitutil"
+	"github.com/kowshik24/git-doc/internal/hooks"
+	"github.com/kowshik24/git-doc/internal/llm"
+	"github.com/kowshik24/git-doc/internal/orchestrator"
+	"github.com/kowshik24/git-doc/internal/runlock"
+	"github.com/kowshik24/git-doc/internal/state"
 )
 
 const version = "0.1.0"

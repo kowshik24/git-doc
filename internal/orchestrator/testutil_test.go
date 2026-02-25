@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kowshik/git-doc/internal/config"
-	"github.com/kowshik/git-doc/internal/doc"
-	"github.com/kowshik/git-doc/internal/gitutil"
-	"github.com/kowshik/git-doc/internal/llm"
-	"github.com/kowshik/git-doc/internal/state"
+	"github.com/kowshik24/git-doc/internal/config"
+	"github.com/kowshik24/git-doc/internal/doc"
+	"github.com/kowshik24/git-doc/internal/gitutil"
+	"github.com/kowshik24/git-doc/internal/llm"
+	"github.com/kowshik24/git-doc/internal/state"
 )
 
 type fakeGitHelper struct {

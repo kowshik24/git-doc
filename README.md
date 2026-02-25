@@ -1,7 +1,7 @@
 # git-doc
 
 <p align="center">
-  <img src="logo-2.png" alt="git-doc logo" width="1024" height="512" />
+   <img src="logo.svg" alt="git-doc logo" width="180" />
 </p>
 
 
@@ -35,7 +35,7 @@ Prerequisites:
 - Git
 
 ```bash
-git clone https://github.com/kowshik/git-doc.git
+git clone https://github.com/kowshik24/git-doc.git
 cd git-doc
 go build -o git-doc ./cmd/git-doc
 ```
@@ -43,7 +43,7 @@ go build -o git-doc ./cmd/git-doc
 ### Install via `go install`
 
 ```bash
-go install github.com/kowshik/git-doc/cmd/git-doc@latest
+go install github.com/kowshik24/git-doc/cmd/git-doc@latest
 ```
 
 ## Quick start

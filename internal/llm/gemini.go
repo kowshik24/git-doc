@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kowshik/git-doc/internal/config"
+	"github.com/kowshik24/git-doc/internal/config"
 )
 
 type GeminiClient struct {
