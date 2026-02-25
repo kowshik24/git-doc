@@ -63,7 +63,7 @@ jobs:
           ./scripts/release/render_homebrew_formula.sh "$version" dist/checksums.txt dist/packaging/git-doc.rb
           ./scripts/release/render_scoop_manifest.sh "$version" dist/checksums.txt dist/packaging/git-doc.json
       - name: Upload packaging artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packaging-manifests
           path: dist/packaging/
