@@ -30,8 +30,11 @@ func (m *Manager) Enable() error {
 			return err
 		}
 
-		if err := os.WriteFile(hookPath, []byte(hookScript()), 0o755); err != nil {
+		if err := os.WriteFile(hookPath, []byte(hookScript()), 0o600); err != nil {
 			return fmt.Errorf("write hook %s: %w", hook, err)
+		}
+		if err := os.Chmod(hookPath, 0o755); err != nil {
+			return fmt.Errorf("set hook mode %s: %w", hook, err)
 		}
 	}
 
@@ -94,7 +97,7 @@ func (m *Manager) backupHookIfNeeded(hookPath string) error {
 		return nil
 	}
 
-	if err := os.WriteFile(backupPath, content, 0o755); err != nil {
+	if err := os.WriteFile(backupPath, content, 0o600); err != nil {
 		return fmt.Errorf("backup existing hook: %w", err)
 	}
 

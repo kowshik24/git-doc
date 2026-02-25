@@ -36,19 +36,28 @@ func AtomicWriteFile(path string, content []byte, perm os.FileMode) error {
 	}
 
 	if _, err := tmp.Write(content); err != nil {
-		tmp.Close()
+		if closeErr := tmp.Close(); closeErr != nil {
+			cleanup()
+			return fmt.Errorf("close temp file after write failure: %w", closeErr)
+		}
 		cleanup()
 		return fmt.Errorf("write temp file: %w", err)
 	}
 
 	if err := tmp.Chmod(perm); err != nil {
-		tmp.Close()
+		if closeErr := tmp.Close(); closeErr != nil {
+			cleanup()
+			return fmt.Errorf("close temp file after chmod failure: %w", closeErr)
+		}
 		cleanup()
 		return fmt.Errorf("chmod temp file: %w", err)
 	}
 
 	if err := tmp.Sync(); err != nil {
-		tmp.Close()
+		if closeErr := tmp.Close(); closeErr != nil {
+			cleanup()
+			return fmt.Errorf("close temp file after sync failure: %w", closeErr)
+		}
 		cleanup()
 		return fmt.Errorf("sync temp file: %w", err)
 	}
