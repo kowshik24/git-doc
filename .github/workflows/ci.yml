@@ -1,0 +1,66 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.21.x', '1.22.x']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Download dependencies
+        run: go mod download
+      - name: Verify go.mod/go.sum are tidy
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./...
+
+  packaging-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate packaging render scripts
+        run: |
+          bash -n scripts/release/render_homebrew_formula.sh
+          bash -n scripts/release/render_scoop_manifest.sh
+      - name: Render manifests with synthetic checksums
+        run: |
+          tmpdir="$(mktemp -d)"
+          printf '%s\n' \
+            "111 git-doc_1.2.3_darwin_amd64.tar.gz" \
+            "222 git-doc_1.2.3_darwin_arm64.tar.gz" \
+            "333 git-doc_1.2.3_linux_amd64.tar.gz" \
+            "444 git-doc_1.2.3_linux_arm64.tar.gz" \
+            "555 git-doc_1.2.3_windows_amd64.zip" \
+            "666 git-doc_1.2.3_windows_arm64.zip" > "$tmpdir/checksums.txt"
+          bash scripts/release/render_homebrew_formula.sh 1.2.3 "$tmpdir/checksums.txt" "$tmpdir/git-doc.rb" "${{ github.repository }}"
+          bash scripts/release/render_scoop_manifest.sh 1.2.3 "$tmpdir/checksums.txt" "$tmpdir/git-doc.json" "${{ github.repository }}"
+          grep -q 'sha256 "222"' "$tmpdir/git-doc.rb"
+          grep -q '"hash": "555"' "$tmpdir/git-doc.json"

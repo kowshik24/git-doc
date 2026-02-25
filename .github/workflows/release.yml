@@ -1,0 +1,115 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  HOMEBREW_FORMULA_PATH: Formula/git-doc.rb
+  SCOOP_MANIFEST_PATH: bucket/git-doc.json
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate tag format
+        run: |
+          if ! [[ "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Tag ${GITHUB_REF_NAME} is not semver-compatible (expected vMAJOR.MINOR.PATCH[-PRERELEASE])"
+            exit 1
+          fi
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21.x'
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Test
+        run: go test ./...
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.7.0
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_YES: 'true'
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'dist/checksums.txt'
+      - name: Build Homebrew/Scoop manifests
+        run: |
+          chmod +x scripts/release/render_homebrew_formula.sh scripts/release/render_scoop_manifest.sh
+          version="${GITHUB_REF_NAME#v}"
+          mkdir -p dist/packaging
+          ./scripts/release/render_homebrew_formula.sh "$version" dist/checksums.txt dist/packaging/git-doc.rb
+          ./scripts/release/render_scoop_manifest.sh "$version" dist/checksums.txt dist/packaging/git-doc.json
+      - name: Upload packaging artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaging-manifests
+          path: dist/packaging/
+
+      - name: Checkout Homebrew tap
+        if: ${{ vars.HOMEBREW_TAP_REPO != '' && secrets.HOMEBREW_TAP_GITHUB_TOKEN != '' }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.HOMEBREW_TAP_REPO }}
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          path: homebrew-tap
+      - name: Publish Homebrew formula
+        if: ${{ vars.HOMEBREW_TAP_REPO != '' && secrets.HOMEBREW_TAP_GITHUB_TOKEN != '' }}
+        run: |
+          mkdir -p "homebrew-tap/$(dirname "${HOMEBREW_FORMULA_PATH}")"
+          cp dist/packaging/git-doc.rb "homebrew-tap/${HOMEBREW_FORMULA_PATH}"
+          cd homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${HOMEBREW_FORMULA_PATH}"
+          if git diff --cached --quiet; then
+            echo "No Homebrew formula changes to publish"
+            exit 0
+          fi
+          git commit -m "chore(release): update git-doc formula for ${GITHUB_REF_NAME}"
+          git push
+
+      - name: Checkout Scoop bucket
+        if: ${{ vars.SCOOP_BUCKET_REPO != '' && secrets.SCOOP_BUCKET_GITHUB_TOKEN != '' }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.SCOOP_BUCKET_REPO }}
+          token: ${{ secrets.SCOOP_BUCKET_GITHUB_TOKEN }}
+          path: scoop-bucket
+      - name: Publish Scoop manifest
+        if: ${{ vars.SCOOP_BUCKET_REPO != '' && secrets.SCOOP_BUCKET_GITHUB_TOKEN != '' }}
+        run: |
+          mkdir -p "scoop-bucket/$(dirname "${SCOOP_MANIFEST_PATH}")"
+          cp dist/packaging/git-doc.json "scoop-bucket/${SCOOP_MANIFEST_PATH}"
+          cd scoop-bucket
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${SCOOP_MANIFEST_PATH}"
+          if git diff --cached --quiet; then
+            echo "No Scoop manifest changes to publish"
+            exit 0
+          fi
+          git commit -m "chore(release): update git-doc scoop manifest for ${GITHUB_REF_NAME}"
+          git push

@@ -1,0 +1,43 @@
+# Binaries
+bin/
+git-doc
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build/test artifacts
+dist/
+coverage.out
+*.test
+*.prof
+*.coverprofile
+
+# Go workspace artifacts
+go.work
+go.work.sum
+
+# Local state/runtime
+.git-doc/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs/temp
+*.log
+tmp/
+.tmp/
+logo.svg
+logo-1.svg
