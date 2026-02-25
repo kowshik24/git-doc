@@ -1,11 +1,11 @@
 module github.com/kowshik24/git-doc
 
-go 1.21
+go 1.22
 
 require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/spf13/cobra v1.8.1
-	github.com/yuin/goldmark v1.7.8
+	github.com/yuin/goldmark v1.7.16
 	modernc.org/sqlite v1.34.5
 )
 
