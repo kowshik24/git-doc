@@ -12,6 +12,8 @@ builds:
     binary: git-doc
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/kowshik24/git-doc/internal/cli.version={{ .Version }}
     goos:
       - linux
       - darwin

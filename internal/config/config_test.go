@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -65,5 +66,29 @@ default_section = "Recent Changes"
 
 	if _, err := Load(configPath); err == nil {
 		t.Fatalf("expected load to fail for invalid fallback provider")
+	}
+}
+
+func TestDefaultTomlAllowsTopLevelDocFilesOverride(t *testing.T) {
+	tmpDir := t.TempDir()
+	configPath := filepath.Join(tmpDir, "config.toml")
+	content := strings.Replace(
+		DefaultToml(),
+		`doc_files = ["README.md", "docs/**/*.md"]`,
+		`doc_files = ["GUIDE.md"]`,
+		1,
+	)
+
+	if err := os.WriteFile(configPath, []byte(content), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := Load(configPath)
+	if err != nil {
+		t.Fatalf("expected config to load, got error: %v", err)
+	}
+
+	if len(cfg.DocFiles) != 1 || cfg.DocFiles[0] != "GUIDE.md" {
+		t.Fatalf("expected top-level doc_files override to be loaded, got %#v", cfg.DocFiles)
 	}
 }

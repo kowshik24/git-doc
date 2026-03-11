@@ -31,7 +31,7 @@ Automatically update project documentation from Git commits using configurable L
 
 Prerequisites:
 
-- Go 1.21+
+- Go 1.24+
 - Git
 
 ```bash

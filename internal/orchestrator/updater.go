@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -276,7 +277,7 @@ func (u *Updater) processSingleCommit(ctx context.Context, runID, hash string, d
 func (u *Updater) resolveTarget(changedFiles []string) (string, string) {
 	for _, changed := range changedFiles {
 		for _, mapping := range u.deps.Config.Mappings {
-			if strings.Contains(changed, strings.Trim(mapping.CodePattern, "*")) {
+			if matchCodePattern(mapping.CodePattern, changed) {
 				return mapping.DocFile, mapping.Section
 			}
 		}
@@ -287,6 +288,49 @@ func (u *Updater) resolveTarget(changedFiles []string) (string, string) {
 	}
 
 	return "README.md", u.deps.Config.Runtime.DefaultSection
+}
+
+func matchCodePattern(pattern, changedPath string) bool {
+	pattern = strings.TrimSpace(pattern)
+	changedPath = strings.TrimSpace(filepath.ToSlash(changedPath))
+	if pattern == "" || changedPath == "" {
+		return false
+	}
+
+	pattern = filepath.ToSlash(pattern)
+	patternParts := strings.Split(pattern, "/")
+	pathParts := strings.Split(changedPath, "/")
+	return matchPathSegments(patternParts, pathParts)
+}
+
+func matchPathSegments(patternParts, pathParts []string) bool {
+	if len(patternParts) == 0 {
+		return len(pathParts) == 0
+	}
+
+	head := patternParts[0]
+	if head == "**" {
+		if matchPathSegments(patternParts[1:], pathParts) {
+			return true
+		}
+		for i := 0; i < len(pathParts); i++ {
+			if matchPathSegments(patternParts[1:], pathParts[i+1:]) {
+				return true
+			}
+		}
+		return false
+	}
+
+	if len(pathParts) == 0 {
+		return false
+	}
+
+	ok, err := path.Match(head, pathParts[0])
+	if err != nil || !ok {
+		return false
+	}
+
+	return matchPathSegments(patternParts[1:], pathParts[1:])
 }
 
 func buildPrompt(commitMessage, diff string) string {

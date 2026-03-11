@@ -86,7 +86,10 @@ func Default() *Config {
 }
 
 func DefaultToml() string {
-	return `# LLM settings
+	return `# Documentation files to manage (glob patterns)
+doc_files = ["README.md", "docs/**/*.md"]
+
+# LLM settings
 [llm]
 provider = "mock"
 api_key = "${GITDOC_OPENAI_KEY}"
@@ -95,8 +98,6 @@ timeout = 60
 max_retries = 3
 failover_enabled = true
 fallback_providers = []
-
-doc_files = ["README.md", "docs/**/*.md"]
 
 [git]
 commit_doc_updates = true

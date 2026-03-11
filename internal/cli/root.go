@@ -22,7 +22,7 @@ import (
 	"github.com/kowshik24/git-doc/internal/state"
 )
 
-const version = "0.1.0"
+var version = "dev"
 
 type rootFlags struct {
 	configPath string
